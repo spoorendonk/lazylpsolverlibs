@@ -13,7 +13,20 @@ class LazylpsolverlibsConan(ConanFile):
     options = {"shared": [True, False]}
     default_options = {"shared": False}
     keep_imports = True
-    exports_sources = ("configure", "lazylpsolverlibs", "src*", "")
+    exports_sources = (
+        "configure.ac",
+        "Makefile.am",
+        "lazylpsolverlibs*",
+        "autogen.sh",
+        "helpers*",
+        "lib*",
+        "share*",
+        "README",
+        "AUTHORS",
+        "INSTALL",
+        "ChangeLog",
+        "NEWS",
+    )
 
     def build(self):
         env_build = AutoToolsBuildEnvironment(self)
@@ -34,5 +47,4 @@ class LazylpsolverlibsConan(ConanFile):
         self.copy("lib/.libs/liblazyxprs.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["lazyxprs.a"]
-
+        self.cpp_info.libs = ["liblazyxprs.a"]
