@@ -14,6 +14,7 @@ lazylpsolverlibs is hosted at https://code.google.com/p/lazylpsolverlibs/
 
 DEPENDENCIES
 ============
+- gmodule-2.0
 - glib-2.0
 
 INSTALLATION
@@ -60,3 +61,18 @@ symlink or an environment variable.
 BUGS
 ====
 Report them to <chmd@chmd.fr>
+
+CONAN
+====
+Create
+
+conan create . flowty/stable
+
+Development
+
+conan editable add . lazylpsolverlibs/1.0.0@flowty/stable --layout=layout.ini
+conan install . --install-folder=tmp/build
+conan build . --build-folder tmp/build --source-folder .
+conan package . --source-folder=. --build-folder=tmp/build --package-folder=tmp/package
+
+conan editable remove lazylpsolverlibs/1.0.0@flowty/stable
