@@ -18,7 +18,8 @@ DEPENDENCIES
 
 INSTALLATION
 ============
-./configure
+autoreconf -i
+./configure --with-pic --enable-static
 make
 make install
 
