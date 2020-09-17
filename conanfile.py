@@ -29,22 +29,20 @@ class LazylpsolverlibsConan(ConanFile):
     )
 
     def build(self):
-        env_build = AutoToolsBuildEnvironment(self)
-        with tools.environment_append(env_build.vars):
-            with tools.chdir(self.source_folder):
-                self.run("autoreconf -i")
-                self.run("./configure --with-pic --enable-static --disable-shared")
-                self.run("make all")
-
-        # Explicit way:
-        # self.run('cmake %s/hello %s'
-        #          % (self.source_folder, cmake.command_line))
-        # self.run("cmake --build . %s" % cmake.build_config)
+        if tools.os_info.is_linux:
+            env_build = AutoToolsBuildEnvironment(self)
+            with tools.environment_append(env_build.vars):
+                with tools.chdir(self.source_folder):
+                    self.run("autoreconf -i")
+                    self.run("./configure --with-pic --enable-static --disable-shared")
+                    self.run("make all")
 
     def package(self):
-        self.copy("lazylpsolverlibs.h", dst="include", src="lazylpsolverlibs")
         self.copy("xprs.h", dst="include", src="lazylpsolverlibs")
-        self.copy("lib/.libs/liblazyxprs.a", dst="lib", keep_path=False)
+        if tools.os_info.is_linux:
+            self.copy("lazylpsolverlibs.h", dst="include", src="lazylpsolverlibs")
+            self.copy("lib/.libs/liblazyxprs.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["liblazyxprs.a"]
+        if tools.os_info.is_linux:
+            self.cpp_info.libs = ["liblazyxprs.a"]
