@@ -32,9 +32,14 @@ class LazylpsolverlibsConan(ConanFile):
         if tools.os_info.is_linux:
             env_build = AutoToolsBuildEnvironment(self)
             with tools.environment_append(env_build.vars):
+                args = ["--with-pic", "--enable-static", "--disable-shared"]
+
+                if self.settings.build_type == "Debug":
+                    args.append("--enable-debug")
+
                 with tools.chdir(self.source_folder):
                     self.run("autoreconf -i")
-                    self.run("./configure --with-pic --enable-static --disable-shared")
+                    self.run(f"./configure {' '.join(args)}")
                     self.run("make all")
 
     def package(self):
