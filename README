@@ -64,16 +64,24 @@ Report them to <chmd@chmd.fr>
 
 CONAN
 ====
+Build env
+
+sudo apt-get install autoconf autotools-dev libtool pkg-config libglib2.0-dev -y
+
 Create
 
-conan create . flowty/stable --profile gcc9.profile -s build_type=Debug
+conan create . flowty/stable --profile gcc8.profile -s build_type=Debug
 
 Development
 
 conan editable add . lazylpsolverlibs/1.0.0@flowty/stable --layout=layout.ini
-conan install . --install-folder=tmp/build --profile gcc9.profile -s build_type=Debug
+conan install . --install-folder=tmp/build --profile gcc8.profile -s build_type=Debug
 conan build . --build-folder tmp/build --source-folder .
 conan package . --source-folder=. --build-folder=tmp/build --package-folder=tmp/package
-conan export-pkg . flowty/stable --source-folder=. --build-folder=tmp/build --profile gcc9.profile -s build_type=Debug
+conan export-pkg . flowty/stable --source-folder=. --build-folder=tmp/build --profile gcc8.profile -s build_type=Debug
 
 conan editable remove lazylpsolverlibs/1.0.0@flowty/stable
+
+Clean diretory
+
+rm -rf tmp src bin *.lo *.o Makefile Makefile.in install-sh depcomp config.* configure compile .deps autom4te.cache aclocal.m4 ltmain.sh libtool missing INSTALL
