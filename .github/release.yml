@@ -1,0 +1,55 @@
+name: C/C++ Release CI
+
+on:
+  push:
+    tags: version/**
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-18.04
+          - windows-2019
+        include: 
+        - os: ubuntu-18.04
+          PROFILE: gcc8.profile
+        - os: windows-2019
+          PROFILE: msvc16.profile
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+#    - name: Install dependencies
+#      run: |
+#        python -m pip install --upgrade pip
+    - name: Install Conan
+      run: pip install --upgrade conan
+    - name: Setup Conan
+      run: |
+        conan remote add gitlab https://gitlab.com/api/v4/projects/21124060/packages/conan
+        conan user ${{ secrets.GITLAB_CONAN_USER }} -r gitlab -p ${{ secrets.GITLAB_CONAN_KEY }}
+    - name: Get 'coin-or' version
+      id: get_version
+      run: |
+        export VERSION=$(grep "version =" conanfile.py | sed -e 's/^[[:space:]]*//' | sed -r 's/version = "//' | sed -r 's/"//')
+        echo ::set-output name=VERSION::$VERSION
+        echo VERSION=$VERSION
+      shell: bash
+    - name: Install dependencies (Linux)
+      run: |
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 80 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8 --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-8
+        sudo apt-get update
+        sudo apt-get install libtbb-dev -y
+      if: matrix.os == 'ubuntu-18.04'
+    - name: Create Conan Package
+      run: |
+        conan create . flowty/stable --profile ${{matrix.PROFILE}}
+    - name: Upload Conan Package
+      run: |
+        conan upload lazylpsolverlibs/${{steps.get_version.outputs.VERSION}}@flowty/stable -r gitlab --all
