@@ -3,7 +3,7 @@ from conans import ConanFile, AutoToolsBuildEnvironment, tools
 
 class LazylpsolverlibsConan(ConanFile):
     name = "lazylpsolverlibs"
-    version = "1.0.0"
+    version = "1.1.0"
     license = "<Put the package license here>"
     author = "<Put your name here> <And your email here>"
     url = "<Package recipe repository url here, for issues about the package>"
